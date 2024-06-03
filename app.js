@@ -3,6 +3,9 @@ require('dotenv').config();
 const express = require('express');
 const expressLayout = require('express-ejs-layouts');
 
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+
 const connectDB = require('./server/config/db')
 
 const app = express();
@@ -14,6 +17,20 @@ connectDB();
 //allow data to be transfered
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+
+//add cookie parser and create session for user tracking
+
+
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: true,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI
+    })
+    //cookie: { maxAge: new Date (Date.now() + (3600000))}
+    //Date.now( - 30 * 24 * 60 60 1000)
+}))
 
 //allow acces to public folder
 app.use(express.static(__dirname + '/public'));
