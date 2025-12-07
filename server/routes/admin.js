@@ -8,6 +8,26 @@ const jwt = require('jsonwebtoken');
 const adminLayout = '../views/layouts/admin';
 const jwtSecret = process.env.jwtSecret;
 
+/**
+ * 
+ * Check Login
+ */
+
+const authMiddleware = (req, res, next) =>{
+    const token = req.cookies.token;
+
+    if(!token){
+        return res.status(401).json({message: 'Unnauthorized'});
+    }
+
+    try{
+        const decoded = jwt.verify(token, jwtSecret);
+        req.userId = decoded.userId
+        next();        
+    } catch(error){
+        return res.status(401).json({message: 'Unauthorized'});
+    }
+}
 
 /**
  * GET /
@@ -53,8 +73,8 @@ router.post('/admin', async (req, res) => {
         }
 
         const token = jwt.sign({userId: user._id}, jwtSecret);
-        console.log(token);
-        res.cookie('token', token);
+
+        res.cookie('token', token, {httpOnly: true});
         res.redirect('/dashboard');
 
     } catch (error) {
@@ -63,14 +83,53 @@ router.post('/admin', async (req, res) => {
 });
 
 /**
- * POST /
- * Admin - check login
+ * GET /
+ * Admin Dashboard
  */
 
-router.get('/dashboard', async (req, res) => {
+router.get('/dashboard', authMiddleware, async (req, res) => {
 
-    res.render('admin/dashboard');
 
+    try {
+        const locals = {
+            title: "Admin",
+            description: "Simple Blog created with NodeJs, Express, and MongoDb"
+        }
+
+        const data = await Post.find();
+        res.render('admin/dashboard', {
+            locals,
+            data,
+            layout: adminLayout
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+/**
+ * GET /
+ * Admin - create new post
+ */
+
+router.get('/add-post', authMiddleware, async (req, res) => {
+
+
+    try {
+        const locals = {
+            title: "Add Post",
+            description: "Simple Blog created with NodeJs, Express, and MongoDb"
+        }
+
+        const data = await Post.find();
+        res.render('admin/dashboard', {
+            locals,
+            data,
+            layout: adminLayout
+        });
+    } catch (error) {
+        console.log(error);
+    }
 });
 
 // router.post('/admin', async (req, res) => {

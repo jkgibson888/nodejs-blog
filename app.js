@@ -5,7 +5,7 @@ const expressLayout = require('express-ejs-layouts');
 
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-
+const cookieParser = require('cookie-parser');
 const connectDB = require('./server/config/db')
 
 const app = express();
@@ -19,7 +19,7 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 
 //add cookie parser and create session for user tracking
-
+app.use(cookieParser());
 
 app.use(session({
     secret: 'keyboard cat',
