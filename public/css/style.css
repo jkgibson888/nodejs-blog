@@ -346,14 +346,16 @@ img{
   .admin-posts {
     padding: 0;
     margin: 0;
+    
+    
   }
   
   .admin-post-controls form {
-    display: inline-block;
+     display:inline-block;
   }
   
   .admin-post-controls .btn  {
-    display: inline-block;
+    display:inline-block;
     background-color: var(--black);
     color: var(--gray-light);
     border: 0;
