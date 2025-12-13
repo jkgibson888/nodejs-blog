@@ -107,30 +107,6 @@ router.get('/dashboard', authMiddleware, async (req, res) => {
     }
 });
 
-/**
- * GET /
- * Admin - create new post
- */
-
-router.get('/add-post', authMiddleware, async (req, res) => {
-
-
-    try {
-        const locals = {
-            title: "Add Post",
-            description: "Simple Blog created with NodeJs, Express, and MongoDb"
-        }
-
-        const data = await Post.find();
-        res.render('admin/dashboard', {
-            locals,
-            data,
-            layout: adminLayout
-        });
-    } catch (error) {
-        console.log(error);
-    }
-});
 
 // router.post('/admin', async (req, res) => {
 
@@ -179,6 +155,56 @@ router.post('/register', async (req, res) => {
     }
 });
 
+/**
+ * Get /
+ * Admin - add a new post
+ */
+
+router.get('/add-post', authMiddleware, async (req, res) => {
+
+    try {
+        const locals = {
+            title: "Add Post",
+            description: "Simple Blog created with NodeJs, Express, and MongoDb"
+        }
+
+        const data = await Post.find();
+        res.render('admin/add-post', {
+            locals,
+            data,
+            layout: adminLayout
+        });
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+
+/**
+ * POST /
+ * Admin - add a new post
+ */
+
+router.post('/add-post', authMiddleware, async (req, res) => {
+
+    try {
+        
+        try {
+            const newPost = new Post({
+                title: req.body.title,
+                body: req.body.body
+            })
+
+            await Post.create(newPost);
+            res.redirect('/dashboard');
+        } catch (error) {
+            console.log(error);
+        }
+
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 
 module.exports = router;
