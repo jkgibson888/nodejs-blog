@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const expressLayout = require('express-ejs-layouts');
-
+const methodOverride =require('method-override');
 const session = require('express-session');
 const cookieParser = require('cookie-parser');
 const MongoStore = require('connect-mongo');
@@ -18,6 +18,8 @@ connectDB();
 //allow data to be transfered
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
+
+app.use(methodOverride('_method'));
 
 //add cookie parser and create session for user tracking
 app.use(cookieParser());

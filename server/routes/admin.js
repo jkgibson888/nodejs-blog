@@ -210,7 +210,7 @@ router.post('/add-post', authMiddleware, async (req, res) => {
  * Admin - edit a post
  */
 
-router.get('/edit-post/:id', async (req, res) => {
+router.get('/edit-post/:id', authMiddleware, async (req, res) => {
 
     try {
 
@@ -249,13 +249,27 @@ router.put('/edit-post/:id', authMiddleware, async (req, res) => {
             body: req.body.body,
             updatedAt: Date.now()
         });
-        res.redirect('/edit-post/${req.params.id}');
+        console.log(req.params.id);
+        res.redirect(`/post/${req.params.id}`);
 
     } catch (error) {
         console.log(error);
     }
 });
 
+/**
+ * DELETE /
+ * Admin - edit a post
+ */
 
+router.delete('/delete-post/:id', authMiddleware, async (req, res) => {
+
+    try {
+        await Post.deleteOne({_id: req.params.id});
+        res.redirect('/dashboard');
+    } catch (error) {
+        console.log(error);
+    }
+});
 
 module.exports = router;
