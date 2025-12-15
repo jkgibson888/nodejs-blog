@@ -168,10 +168,9 @@ router.get('/add-post', authMiddleware, async (req, res) => {
             description: "Simple Blog created with NodeJs, Express, and MongoDb"
         }
 
-        const data = await Post.find();
+        
         res.render('admin/add-post', {
             locals,
-            data,
             layout: adminLayout
         });
     } catch (error) {
@@ -205,6 +204,58 @@ router.post('/add-post', authMiddleware, async (req, res) => {
         console.log(error);
     }
 });
+
+/**
+ * Get /
+ * Admin - edit a post
+ */
+
+router.get('/edit-post/:id', async (req, res) => {
+
+    try {
+
+        let slug =req.params.id;
+
+
+        const data = await Post.findOne({ _id: req.params.id});
+
+
+        const locals = {
+            title: "Edit Post",
+            description: "Simple Blog created with NodeJs, Express, and MongoDb"
+        }
+
+        res.render('admin/edit-post', {locals, data, layout: adminLayout});
+    } catch (error) {
+        console.log(error);
+    }
+});
+
+/**
+ * PUT /
+ * Admin - edit post
+ */
+
+router.put('/edit-post/:id', authMiddleware, async (req, res) => {
+
+    try {
+        const locals = {
+            title: "Edit Post",
+            description: "Simple Blog created with NodeJs, Express, and MongoDb"
+        }
+        
+        await Post.findByIdAndUpdate(req.params.id, {
+            title: req.body.title,
+            body: req.body.body,
+            updatedAt: Date.now()
+        });
+        res.redirect('/edit-post/${req.params.id}');
+
+    } catch (error) {
+        console.log(error);
+    }
+});
+
 
 
 module.exports = router;
